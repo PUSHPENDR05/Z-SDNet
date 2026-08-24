@@ -29,9 +29,36 @@ Z-SDNet is a Software-Defined Networking (SDN) security architecture implementin
 |           Open vSwitch (OVS) Data Plane Subsystem           |
 |  Table 0: Quarantine (300) -> Custom ACL (200) -> L2/L3 (0) |
 +-------------------------------------------------------------+
-Flow PriorityPurpose / Traffic TypeOpenFlow Action300Blacklisted / Quarantined IPsDROP (Hardware-level drop)200Active Zero-Trust Firewall ACLsOUTPUT / DROP100Control Protocols (ARP, LLDP)NORMAL / FLOOD0Default Table-MissSend to Controller (OFP_PACKET_IN)⚡ Quick Start GuidePrerequisitesLinux / Ubuntu (or WSL on Windows)Python 3.8+Mininet & Open vSwitchRyu SDN Framework1. Launch Ryu ControllerBashryu-manager controller.py --ofp-tcp-listen-port 6653 --wsapi-port 8080
-2. Start Mininet TopologyBashsudo mn --custom topo.py --topo mytopo --controller=remote,ip=127.0.0.1,port=6653 --switch=ovsk,protocols=OpenFlow13
-3. Open Telemetry DashboardOpen dashboard.html in your browser or serve it via Python:Bashpython3 -m http.server 8000
-🧪 DDoS Detection & Mitigation VerificationSimulate a SYN/UDP flood attack inside Mininet:Bash# Inside Mininet CLI:
+Flow PriorityPurpose / Traffic TypeOpenFlow Action300Blacklisted / Quarantined IPsDROP (Hardware-level drop)200Active Zero-Trust Firewall ACLsOUTPUT / DROP100Control Protocols (ARP, LLDP)NORMAL / FLOOD0Default Table-MissSend to Controller (OFP_PACKET_IN)⚡ Quick Start GuidePrerequisitesLinux / Ubuntu (or WSL on Windows)Python 3.8+Mininet & Open vSwitchRyu SDN Framework1.
+
+1.Launch Ryu Controller
+ 
+ Bash
+ ryu-manager controller.py --ofp-tcp-listen-port 6653 --wsapi-port 8080
+
+2. Start Mininet Topology
+Bash
+sudo mn --custom topo.py --topo mytopo --controller=remote,ip=127.0.0.1,port=6653 --switch=ovsk,protocols=OpenFlow13
+3. Open Telemetry Dashboard
+Open dashboard.html in your browser or serve it via Python:
+
+Bash
+python3 -m http.server 8000
+🧪 DDoS Detection & Mitigation Verification
+Simulate a SYN/UDP flood attack inside Mininet:
+
+Bash
+# Inside Mininet CLI:
 mininet> h2 hping3 --flood -S -p 80 10.0.0.1
-Detection: Flow stats collector catches threshold violations (>500 pkt/s).Mitigation: Controller installs a Priority 300 DROP rule for host h2 and reflects quarantine status on the Web GUI.🛠️ Tech StackController: Ryu SDN Framework (Python 3)Data Plane: Open vSwitch (OVS), MininetProtocols: OpenFlow 1.3, TCP/IP, ARP, ICMPFrontend: HTML5, CSS3, JavaScript (REST API)
+Detection: Flow stats collector catches threshold violations (>500 pkt/s).
+
+Mitigation: Controller installs a Priority 300 DROP rule for host h2 and reflects quarantine status on the Web GUI.
+
+🛠️ Tech Stack
+Controller: Ryu SDN Framework (Python 3)
+
+Data Plane: Open vSwitch (OVS), Mininet
+
+Protocols: OpenFlow 1.3, TCP/IP, ARP, ICMP
+
+Frontend: HTML5, CSS3, JavaScript (REST API)
